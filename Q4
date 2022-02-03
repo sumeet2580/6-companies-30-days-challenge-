@@ -1,73 +1,72 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-string matrixChainOrder(int arr[], int n)
+vector<int> spirallyTraverse(vector<vector<int>> matrix, int r, int c)
 {
     // code here
-    map<pair<int, int>, string> mp;
-    int dp[n - 1][n - 1];
+    vector<int> ans;
 
-    for (int i = 0, j = 0; j < n - 1; ++j)
+    int row = matrix.size();
+    int col = matrix[0].size();
+
+    int count = 0;
+    int total = row * col;
+
+    int srow = 0;
+    int scol = 0;
+    int erow = row - 1;
+    int ecol = col - 1;
+    int i;
+    while (count < total)
     {
-        int r = i, c = j, len = n - 1 - j;
-        while (len--)
+        for (i = scol; i <= ecol && count < total; i++)
         {
-            if (j == 0)
-            {
-                dp[r][c] = 0;
-
-                string str = "";
-                char ch = 'A' + (n - 1 - len - 1);
-                str = str + ch;
-                mp[make_pair(r, c)] = str;
-                r++;
-                c++;
-            }
-            else if (j == 1)
-            {
-                dp[r][c] = arr[r] * arr[c] * arr[c + 1];
-                mp[make_pair(r, c)] = '(' + mp[make_pair(r, c - 1)] + mp[make_pair(r + 1, c)] + ')';
-                r++, c++;
-            }
-            else
-            {
-                int right, down;
-                dp[r][c] = INT_MAX;
-                for (right = r, down = r + 1; right <= c && down <= c; right++, down++)
-                {
-
-                    int operations = dp[r][right] + dp[down][c] + arr[r] * arr[down] * arr[c + 1];
-
-                    if (dp[r][c] > operations)
-                    {
-                        dp[r][c] = operations;
-                        mp[make_pair(r, c)] = '(' + mp[make_pair(r, right)] + mp[make_pair(down, c)] + ')';
-                    }
-                }
-
-                r++, c++;
-            }
+            ans.push_back(matrix[srow][i]);
+            count++;
         }
-    }
+        srow++;
 
-    return mp[make_pair(0, n - 2)];
+        for (i = srow; i <= erow && count < total; i++)
+        {
+            ans.push_back(matrix[i][ecol]);
+            count++;
+        }
+        ecol--;
+
+        for (i = ecol; i >= scol && count < total; i--)
+        {
+            ans.push_back(matrix[erow][i]);
+            count++;
+        }
+        erow--;
+
+        for (i = erow; i >= srow && count < total; i--)
+        {
+            ans.push_back(matrix[i][scol]);
+            count++;
+        }
+        scol++;
+    }
+    return ans;
 }
 
 int main()
 {
-    int N;
-    cin >> N;
+        int r,c;
+        cin>>r>>c; 
+        vector<vector<int> > matrix(r);
+        for(int i=0; i<r; i++)
+        {
+            matrix[i].assign(c,0);
+            for(int j=0; j<c; j++)
+                cin>>matrix[i][j]; 
+        }
+        vector<int>res = spirallyTraverse(matrix , r, c);
 
-    int arr[N];
-    for (int i = 0; i < N; i++)
-    {
-        cin >> arr[i];
-    }
-    string res;
-    res = matrixChainOrder(arr , N);
-
-   cout<<res<<endl;
-
+        for (int i = 0; i < res.size() ; ++i)
+        {
+            cout<<res[i]<<" ";
+        }
+    
     return 0;
 }
