@@ -2,43 +2,70 @@
 
 using namespace std;
 
-int maxProfit(int K, int N, int A[])
-{
-    // code here
-    int dp[K + 1][N];
-    memset(dp, 0, sizeof(dp));
-    for (int i = 1; i <= K; i++)
-    {
-        int max_num = INT_MIN;
-        for (int j = 1; j < N; j++)
-        {
-            if ((dp[i - 1][j - 1] - A[j - 1]) > max_num)
-            {
-                max_num = dp[i - 1][j - 1] - A[j - 1];
-            }
+	int minDifference(int arr[], int n)  { 
+	    int sum=0;
+	    
+	    for(int i=0;i<n;i++)
+	    {
+	        sum+= arr[i];
+	    }
+	    bool dp[n+1][sum+1];
+	    
+	    for(int i=0;i<=n;i++)
+	    {
+	        for(int j=0;j<=sum;j++)
+	        {
+	            if(i==0)
+	            {
+	                dp[i][j]=false;
+	            }
+	            
+	            if(j==0)
+	            {
+	                dp[i][j] = true;
+	            }
+	        }
+	    }
+	    
+	    for(int i=1;i<=n;i++)
+	    {
+	        for(int j=1;j<=sum;j++)
+	        {
+	            if(arr[i-1]<=j)
+	            {
+	                dp[i][j] = dp[i-1][j] || dp[i-1][j-arr[i-1]];
+	            }
+	            else
+	            {
+	                dp[i][j] = dp[i-1][j];
+	            }
+	        }
+	    }
+	    
+	    int ans = INT_MAX;
+	    
+	    for(int i=0;i<=sum/2;i++)
+	    {
+	        if(dp[n][i]==true && ans>abs(i-(sum-i)))
+	        {
+	            ans  = abs(i-(sum-i));
+	        }
+	    }
+	    return ans;
+	} 
 
-            if ((max_num + A[j]) > dp[i][j - 1])
-                dp[i][j] = max_num + A[j];
-            else
-                dp[i][j] = dp[i][j - 1];
-        }
+
+    int main(){
+        int n;
+        cin>>n;
+
+        int arr[n];
+        for(int i=0 ; i<n ;i++)
+         cin>>arr[i];
+
+        int result = minDifference(arr, n);
+
+        cout<<result<<endl;
+
+        return 0; 
     }
-
-    return dp[K][N - 1];
-}
-
-int main()
-{
-    int K, N;
-    cin >> K >> N;
-
-    int arr[N];
-    for (int i = 0; i < N; i++)
-        cin >> arr[i];
-
-    int result = maxProfit(K, N, arr);
-
-    cout << result << endl;
-
-    return 0;
-}
